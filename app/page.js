@@ -53,7 +53,7 @@ export default function Home() {
 
 
   return (
-    <main>
+    <main className="flex flex-col justify-center items-center h-[100vh]">
       <header className="flex justify-center items-center bg-[#0D182E] w-[390px] h-[213px]">
 
         <Image className="z-10" src="/parrot.png" width={94} height={84} alt="parrot picture" />
@@ -62,7 +62,7 @@ export default function Home() {
         <h2 className="font-semibold text-[12.21px] leading-[150%] tracking-normal">Perfect Translation Every Time</h2>
         </div>
       </header>
-      <section className="flex justify-center items-center bg-white w-[390px] h-auto">
+      <section className="flex justify-center items-center bg-white w-[390px] h-full">
         <div className=" flex flex-col border-4 border-[#252F42] w-full h-[505px] m-3.5 pt-[44px] pr-6 pl-6 rounded-2xl">
           
           <div className="overflow-y-auto flex flex-col scroll-smooth scrollbar-none">

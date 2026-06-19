@@ -11,6 +11,8 @@ const client = new OpenAI({
 
 const app = express();
 
+const PORT = process.env.PORT || 3001;
+
 app.use(cors());
 app.use(express.json());
 
@@ -50,6 +52,6 @@ catch(e){
 });
 
 
-app.listen(3001, () => {
-  console.log("Server is running on http://localhost:3001");
+app.listen(PORT, () => {
+  console.log("Server is running on " + PORT);
 });
