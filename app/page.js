@@ -1,65 +1,96 @@
+'use client'
 import Image from "next/image";
+import { useState, useRef, useEffect  } from 'react'
 
 export default function Home() {
+  const [selectedLanguage, setSelectedLanguage] = useState(0);
+  const [text, setText] = useState("")
+  const [messages, setMessages] = useState([])
+  const bottomRef = useRef(null);
+
+    useEffect(() => {
+    // Smoothly scroll to the hidden element at the bottom
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+
+  const handleChange = (event) => {
+    setText(event.target.value);
+  };
+
+   const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      Translate();
+    }
+  };
+
+  async function Translate(){
+    try{
+    setMessages(prev => [...prev, {owner: 1, message: text}]);
+    const payload = {
+      language: selectedLanguage,
+      text: text
+    }
+    
+    const response = await fetch("http://localhost:3001/api/translate", {
+      method: 'POST',
+       headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+
+    setMessages(prev => [...prev, {owner: 0, message: data.response}])
+  }
+    catch(e){
+      console.error(e);
+      setMessages(prev => [...prev, {owner: 0, message: "Whoops I guess something went wrong."}])
+    }
+  }
+
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main>
+      <header className="flex justify-center items-center bg-[#0D182E] w-[390px] h-[213px]">
+
+        <Image className="z-10" src="/parrot.png" width={94} height={84} alt="parrot picture" />
+        <div className="z-10">
+        <h1 className="font-extrabold text-[43.42px] leading-[150%] tracking-normal text-[#32CD32]">PollyGlot</h1>
+        <h2 className="font-semibold text-[12.21px] leading-[150%] tracking-normal">Perfect Translation Every Time</h2>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </header>
+      <section className="flex justify-center items-center bg-white w-[390px] h-auto">
+        <div className=" flex flex-col border-4 border-[#252F42] w-full h-[505px] m-3.5 pt-[44px] pr-6 pl-6 rounded-2xl">
+          
+          <div className="overflow-y-auto flex flex-col scroll-smooth scrollbar-none">
+            <div className="w-[313px] h-[108px] bg-[#035A9D] p-3.5 font-semibold text-[20px] leading-[130%] tracking-normal rounded-2xl">
+            Select the language you want me to translate into, type your text and hit send!
+          </div>
+            {messages.map((m, index) => <div key={index} className={`w-[313px] h-auto mt-5 ${m.owner === 0 ? "bg-[#035A9D]" : "bg-green-500"}  p-3.5 font-semibold text-[20px] leading-[130%] tracking-normal rounded-2xl`}>
+            {m.message}
+            <div ref={bottomRef}> </div>
+          </div>)}
+          </div>
+          <div className="mt-5"></div>
+          <div className="bg-[#F5F5F5] w-[313px] min-h-[67px] h-fit border-2 border-[#586E88] rounded-2xl mt-auto mb-3.5 flex">
+          <textarea onKeyDown={handleKeyDown} content={text} onChange={handleChange} className=" mr-1 w-90 pl-3 resize-none font-semibold text-[20px] leading-[150%] tracking-normal text-[#333333] focus:outline-none scrollbar-none field-sizing-content"></textarea>
+          <svg onClick={() => {
+            Translate();
+            }} className="ml-auto mr-4 mt-4 w-10" width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3.7981 12.6604L1.26603 24.0547L24.0547 12.6604L1.26603 1.26605L3.7981 12.6604ZM3.7981 12.6604L13.9264 12.6604" stroke="#32CD32" strokeWidth="2.53207" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          </div>
+          <div className="flex justify-center gap-10 mb-4 mt-1">
+          <Image alt="french flag" className={`border-3 ${selectedLanguage === 0 ? 'border-blue-700' : ''}`} onClick={() => setSelectedLanguage(0)} src="/frenchflag.png" width={50} height={33} />
+          <Image alt="spanish flag" className={`border-3 ${selectedLanguage === 1 ? 'border-blue-700' : ''}`} onClick={() => setSelectedLanguage(1)} src="/spanishflag.png" width={50} height={33} />
+          <Image alt="japan flag" className={`border-3 ${selectedLanguage === 2 ? 'border-blue-700' : 'border-[#999999]'}`} onClick={() => setSelectedLanguage(2)} src="/japanflag.png" width={50} height={33} />
+          </div>
         </div>
-      </main>
-    </div>
+
+      </section>
+    </main>
   );
 }
