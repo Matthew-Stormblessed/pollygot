@@ -33,7 +33,7 @@ export default function Home() {
       text: text
     }
     
-    const response = await fetch("http://localhost:3001/api/translate", {
+    const response = await fetch("https://pollygot.onrender.com/api/translate", {
       method: 'POST',
        headers: {
         'Content-Type': 'application/json',
