@@ -32,6 +32,7 @@ export default function Home() {
       language: selectedLanguage,
       text: text
     }
+    setText("");
     
     const response = await fetch("https://pollygot.onrender.com/api/translate", {
       method: 'POST',
@@ -76,7 +77,7 @@ export default function Home() {
           </div>
           <div className="mt-5"></div>
           <div className="bg-[#F5F5F5] w-[313px] min-h-[67px] h-fit border-2 border-[#586E88] rounded-2xl mt-auto mb-3.5 flex">
-          <textarea onKeyDown={handleKeyDown} content={text} onChange={handleChange} className=" mr-1 w-90 pl-3 resize-none font-semibold text-[20px] leading-[150%] tracking-normal text-[#333333] focus:outline-none scrollbar-none field-sizing-content"></textarea>
+          <textarea onKeyDown={handleKeyDown} content={text} value={text} onChange={handleChange} className=" mr-1 w-90 pl-3 resize-none font-semibold text-[20px] leading-[150%] tracking-normal text-[#333333] focus:outline-none scrollbar-none field-sizing-content"></textarea>
           <svg onClick={() => {
             Translate();
             }} className="ml-auto mr-4 mt-4 w-10" width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
